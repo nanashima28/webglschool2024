@@ -59,7 +59,6 @@ class App {
     this.canvas.addEventListener('mousemove', (e) => {
       this.mx = e.offsetX / size;
       this.my = e.offsetY / size;
-      console.log(this.mx, this.my)
     }, true);
     this.resolutionX = size;
     this.resolutionY = size;
@@ -160,7 +159,7 @@ class App {
     // ビューポートを設定する
     gl.viewport(0, 0, this.canvas.width, this.canvas.height);
     // クリアする色を設定する（RGBA で 0.0 ～ 1.0 の範囲で指定する）
-    gl.clearColor(0,0,0, 1.0);
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
     // 実際にクリアする（gl.COLOR_BUFFER_BIT で色をクリアしろ、という指定になる）
     gl.clear(gl.COLOR_BUFFER_BIT);
   }

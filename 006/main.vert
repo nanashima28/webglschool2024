@@ -18,8 +18,6 @@ varying vec3 vNormal;
 // lightについて
 varying vec3 lightPosition;
 
-// ライトベクトルはひとまず定数で定義する
-
 void main() {
   
   lightPosition = (lightMMatrix * vec4(light, 1.0)).xyz;

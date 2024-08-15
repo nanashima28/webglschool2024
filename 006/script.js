@@ -22,9 +22,11 @@ import { Pane } from '../lib/tweakpane-4.0.3.min.js';
 window.addEventListener('DOMContentLoaded', async () => {
   const app = new App();
   app.init();
+  const exReady = app.setupExtension();
   await app.load();
   app.setupGeometry();
   app.setupLocation();
+  if (!exReady) return;
   app.start();
 
   // Tweakpane を使った GUI の設定
@@ -36,19 +38,19 @@ window.addEventListener('DOMContentLoaded', async () => {
   };
   // バックフェイスカリングの有効・無効
   pane.addBinding(parameter, 'culling')
-  .on('change', (v) => {
-    app.setCulling(v.value);
-  });
+    .on('change', (v) => {
+      app.setCulling(v.value);
+    });
   // 深度テストの有効・無効
   pane.addBinding(parameter, 'depthTest')
-  .on('change', (v) => {
-    app.setDepthTest(v.value);
-  });
+    .on('change', (v) => {
+      app.setDepthTest(v.value);
+    });
   // 回転の有無
   pane.addBinding(parameter, 'rotation')
-  .on('change', (v) => {
-    app.setRotation(v.value);
-  });
+    .on('change', (v) => {
+      app.setRotation(v.value);
+    });
 }, false);
 
 /**
@@ -81,7 +83,7 @@ class App {
    */
   setCulling(flag) {
     const gl = this.gl;
-    if (gl == null) {return;}
+    if (gl == null) { return; }
     if (flag === true) {
       gl.enable(gl.CULL_FACE);
     } else {
@@ -95,7 +97,7 @@ class App {
    */
   setDepthTest(flag) {
     const gl = this.gl;
-    if (gl == null) {return;}
+    if (gl == null) { return; }
     if (flag === true) {
       gl.enable(gl.DEPTH_TEST);
     } else {
@@ -143,7 +145,7 @@ class App {
    * リサイズ処理
    */
   resize() {
-    this.canvas.width  = window.innerWidth;
+    this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
   }
 
@@ -219,6 +221,19 @@ class App {
   }
 
   /**
+   * webgl extensionの追加
+   */
+  setupExtension() {
+    const gl = this.gl;
+    if (!gl.getExtension('OES_standard_derivatives')) {
+      console.log('OES_standard_derivatives is not supported');
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
    * レンダリングのためのセットアップを行う
    */
   setupRendering() {
@@ -276,10 +291,10 @@ class App {
 
     // ビュー・プロジェクション座標変換行列
     const v = this.camera.update();
-    const fovy   = 45;
+    const fovy = 45;
     const aspect = window.innerWidth / window.innerHeight;
-    const near   = 0.1
-    const far    = 10.0;
+    const near = 0.1
+    const far = 10.0;
     const p = Mat4.perspective(fovy, aspect, near, far);
 
     // 行列を乗算して MVP 行列を生成する（掛ける順序に注意）
